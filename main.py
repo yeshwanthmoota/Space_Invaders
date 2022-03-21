@@ -176,6 +176,10 @@ def main():
                 if pygame.mouse.get_pressed(num_buttons=3) == (1, 0, 0):
                     homeShipBullets.append(homeship.bullet_spawn())
                     channel2.play(BULLET_FIRE_SOUND)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_0:
+                    homeShipBullets.append(homeship.bullet_spawn())
+                    channel2.play(BULLET_FIRE_SOUND)
             if event.type == GAME_OVER:
                 channel1.play(GAME_OVER_MUSIC)
                 if SCORE > HIGH_SCORE:
