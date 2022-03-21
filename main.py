@@ -12,6 +12,7 @@ pygame.init()
 
 
 gameDisplay = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Space Invaders")
 
 fileLocation = os.path.dirname(os.path.abspath(__file__)) # now inside directory 'Space_Invaders'
 # print(fileLocation) # for debugging
@@ -29,24 +30,48 @@ with open(fileLocation + "/.HighScore.txt", "r") as file1:
         
 
 
-# background image
-HOMESHIP_IMG = pygame.image.load(fileLocation + "/Assets" + "/spaceship1.png")
+# Image Rendering
+HOMESHIP_IMG = pygame.image.load(fileLocation + "/Assets/images" + "/spaceship1.png")
 HOMESHIP_IMG = pygame.transform.scale(HOMESHIP_IMG, (HOMESHIP_WIDTH, HOMESHIP_HEIGHT))
-ENEMYSHIP_IMG = pygame.image.load(fileLocation + "/Assets" + "/spaceship2.png")
+ENEMYSHIP_IMG = pygame.image.load(fileLocation + "/Assets/images" + "/spaceship2.png")
 ENEMYSHIP_IMG = pygame.transform.rotate(pygame.transform.scale(ENEMYSHIP_IMG, (ENEMYSHIP_WIDTH, ENEMYSHIP_HEIGHT)), 180)
-BACKGROUND_IMG = pygame.image.load(fileLocation + "/Assets" + "/spaceBackground.jpg").convert()
+BACKGROUND_IMG = pygame.image.load(fileLocation + "/Assets/images" + "/spaceBackground.jpg").convert()
 BACKGROUND_IMG = pygame.transform.scale(BACKGROUND_IMG, (WIDTH, HEIGHT))
 
+# Sounds
 
+channel1 = pygame.mixer.Channel(0) # Background music channel
+channel2 = pygame.mixer.Channel(1) # buller sound
+channel3 = pygame.mixer.Channel(2)
+
+BACKGROUND_MUSIC = pygame.mixer.Sound(fileLocation + "/Assets/sounds" + "/background_music.ogg")
+BACKGROUND_MUSIC.set_volume(0.7)
+BULLET_FIRE_SOUND = pygame.mixer.Sound(fileLocation + "/Assets/sounds" + "/bullet_fire_sound.ogg")
+BULLET_FIRE_SOUND.set_volume(1)
+BULLET_HIT_IMPACT = pygame.mixer.Sound(fileLocation + "/Assets/sounds" + "/bullet_hit_impact.ogg")
+BULLET_HIT_IMPACT.set_volume(1)
+ENEMYSHIP_HIT_SOUND = pygame.mixer.Sound(fileLocation + "/Assets/sounds" + "/enemyship_hit.ogg")
+ENEMYSHIP_HIT_SOUND.set_volume(1)
+CRASH_SOUND = pygame.mixer.Sound(fileLocation + "/Assets/sounds" + "/crash.wav")
+CRASH_SOUND.set_volume(1)
+GAME_OVER_MUSIC = pygame.mixer.Sound(fileLocation + "/Assets/sounds" + "/cheering.wav")
+GAME_OVER_MUSIC.set_volume(0.7)
+
+
+# Custom Events
 GAME_OVER = pygame.USEREVENT + 1 # GAME OVER
 
 SCORE = 0
+
+FONT = pygame.font.SysFont("consolas", 30)
 
 
 
 def draw_display(homeship, enemyShips, homeShipBullets, enemyShipBullets):
     gameDisplay.blit(BACKGROUND_IMG, (0, 0))
+    health_text = FONT.render("HOMESHIP HEALTH: {}".format(homeship.health), 1, WHITE)
     gameDisplay.blit(HOMESHIP_IMG, (homeship.x, homeship.y))
+    gameDisplay.blit(health_text,(WIDTH/2 -health_text.get_width()/2,HEIGHT/2))
     for ship in enemyShips:
         gameDisplay.blit(ENEMYSHIP_IMG, (ship.x, ship.y))
     for bullet in homeShipBullets:
@@ -58,7 +83,12 @@ def draw_display(homeship, enemyShips, homeShipBullets, enemyShipBullets):
     pygame.display.update()
 
 
-
+def draw_end(winner_text):
+    gameDisplay.fill(BLACK)
+    draw_text = FONT.render(winner_text,1, WHITE)
+    gameDisplay.blit(draw_text,(WIDTH/2-(draw_text.get_width())/2, HEIGHT/2-(draw_text.get_height())/2))
+    pygame.display.update()
+    pygame.time.delay(1000*5) # 3 seconds
 
 
 
@@ -70,6 +100,7 @@ def check_for_and_post_events(homeship, enemyShips, homeShipBullets, enemyShipBu
     condition3, bullets2, hitEnemyShips = EnemyShip.is_enemyship_hit(enemyShips, homeShipBullets)
 
     if condition1 is True:
+        channel3.play(BULLET_HIT_IMPACT)
         for bullet in bullets1:
             enemyShipBullets.remove(bullet) # bullet disappears after hitting
         homeship.health -= ENEMY_SHIP_BULLET_DAMAGE * len(bullets1)
@@ -78,6 +109,7 @@ def check_for_and_post_events(homeship, enemyShips, homeShipBullets, enemyShipBu
 
 
     if condition2 is True:
+        channel3.play(CRASH_SOUND)
         for ship in ships1:
             enemyShips.remove(ship) # ship disappears after collision
         homeship.health -= HOMESHIP_ENEMYSHIP_COLLISION_DAMAGE * len(ships1)
@@ -86,6 +118,7 @@ def check_for_and_post_events(homeship, enemyShips, homeShipBullets, enemyShipBu
 
 
     if condition3 is True:
+        channel3.play(ENEMYSHIP_HIT_SOUND)
         for bullet in bullets2:
             homeShipBullets.remove(bullet) # bullets disappears after hitting   
         for ship in hitEnemyShips:
@@ -96,10 +129,8 @@ def check_for_and_post_events(homeship, enemyShips, homeShipBullets, enemyShipBu
 
 
 
-
-
-
 def main():
+    channel1.play(BACKGROUND_MUSIC, -1)
     running = True
 
     clock = pygame.time.Clock()
@@ -108,6 +139,27 @@ def main():
     enemyShips = []
     homeShipBullets = []
     enemyShipBullets = []
+    InitialAnimation = INITIAL_ANIMATION
+
+    while InitialAnimation: # The Home Ship comes from the bottom of the Screen into the View
+        clock.tick(FPS)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: # QUIT
+                running = False
+                pygame.quit()
+                sys.exit(0)
+
+        if (homeship.y + HOMESHIP_HEIGHT/2) <= HEIGHT * 0.75:
+            InitialAnimation = False
+            break
+        else:
+            homeship.y -= HOMESHIP_SPEED_Y * 0.5
+            gameDisplay.blit(BACKGROUND_IMG, (0, 0))
+            gameDisplay.blit(HOMESHIP_IMG, (homeship.x, homeship.y))
+            pygame.display.update()
+
+
 
     while running:
 
@@ -123,15 +175,19 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN: # home ship shoots if left-mouse-click is detected
                 if pygame.mouse.get_pressed(num_buttons=3) == (1, 0, 0):
                     homeShipBullets.append(homeship.bullet_spawn())
+                    channel2.play(BULLET_FIRE_SOUND)
             if event.type == GAME_OVER:
+                channel1.play(GAME_OVER_MUSIC)
                 if SCORE > HIGH_SCORE:
-                    print("Congratulations! You beat the High Score, Your Score is " + str(SCORE))
+                    text = "Congratulations! You beat the High Score, Your Score is " + str(SCORE)
+                    print(text)
                     with open(fileLocation + "/.HighScore.txt", "w") as file1:
                         file1.write(str(SCORE))
                 else:
-                    print("Your Score: " + str(SCORE))
-                    print("High Score: " + str(HIGH_SCORE))
+                    text = "Your Score: " + str(SCORE) + ", High Score: " + str(HIGH_SCORE)
+                    print(text)
                 running = False
+                draw_end(text)
                 pygame.quit()
                 sys.exit(0)
 
@@ -156,8 +212,6 @@ def main():
 
         draw_display(homeship, enemyShips, homeShipBullets, enemyShipBullets) # draw display on screen
         check_for_and_post_events(homeship, enemyShips, homeShipBullets, enemyShipBullets) # check for all the events
-        # print("homeship bullets----> " + str(len(homeShipBullets)) + " <----") # for debugging
-        # print("enemyship bullets----> " + str(len(enemyShipBullets)) + " <----") # for debugging
         info_dict = {
             "homeshipHealth": homeship.health,
             "lengthOfEnemyShipList": len(enemyShips),
