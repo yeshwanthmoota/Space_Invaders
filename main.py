@@ -147,6 +147,32 @@ def main():
     enemyShipBullets = []
     InitialAnimation = INITIAL_ANIMATION
     global MAX_ENEMYSHIPS_ONSCREEN
+    global INCDIFF
+    INCDIFF = False
+    CHECK_Y = True
+
+    while CHECK_Y:
+            gameDisplay.fill(BLACK)
+            keys_pressed = pygame.key.get_pressed()
+            text = "Enter 'Y' to increase difficulty, Any other Key to Not"
+            draw_text =  WINNER_FONT.render(text,1, GREEN)
+            gameDisplay.blit(draw_text,(WIDTH/2-(draw_text.get_width())/2, HEIGHT/2-(draw_text.get_height())/2))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                
+                # checking if keydown event happened or not
+                if event.type == pygame.KEYDOWN:
+                
+                    # if keydown event happened
+                    # than printing a string to output
+                    if event.key == pygame.K_y:
+                        INCDIFF = True
+                        CHECK_Y = False
+                    else:
+                        CHECK_Y = False
+            pygame.display.update()
 
     while InitialAnimation: # The Home Ship comes from the bottom of the Screen into the View
         clock.tick(FPS)
@@ -156,6 +182,7 @@ def main():
                 running = False
                 pygame.quit()
                 sys.exit(0)
+                
 
         if (homeship.y + HOMESHIP_HEIGHT/2) <= HEIGHT * 0.75:
             InitialAnimation = False
@@ -205,9 +232,9 @@ def main():
                 pygame.quit()
                 sys.exit(0)
 
-
-        if SCORE%50 == 0 and SCORE >= 200: # Code for inc difficulty every 5 ships destroyed
-            MAX_ENEMYSHIPS_ONSCREEN = SCORE/50
+        if INCDIFF:
+            if SCORE%50 == 0 and SCORE >= 200: # Code for inc difficulty every 5 ships destroyed
+                MAX_ENEMYSHIPS_ONSCREEN = SCORE/50
         if len(enemyShips) < MAX_ENEMYSHIPS_ONSCREEN: # spawn new enemy ship if possible
             newShip = EnemyShip(enemyShips)
             enemyShips.append(newShip)
