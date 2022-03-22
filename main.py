@@ -19,6 +19,7 @@ fileLocation = os.path.dirname(os.path.abspath(__file__)) # now inside directory
 
 with open(fileLocation + "/.debugging.txt", "w"):
     pass # to clear the debugging file
+#################################################################
 with open(fileLocation + "/.HighScore.txt", "a+") as file1: # To create HighScore.txt file if it didn't exist
     print(file1.read())
 with open(fileLocation + "/.HighScore.txt", "r") as file1:
@@ -176,6 +177,17 @@ def main():
                     # than printing a string to output
                     if event.key == pygame.K_y:
                         INCDIFF = True
+                        #################################################################
+                        global HIGH_SCORE
+                        with open(fileLocation + "/.HighScoreDiff.txt", "a+") as file1: # To create HighScoreDiff.txt file if it didn't exist for recording difficult mode scores
+                            print(file1.read())
+                        with open(fileLocation + "/.HighScoreDiff.txt", "r") as file1:
+                            if file1.read() == "":
+                                HIGH_SCORE = 0
+                            else:
+                                with open(fileLocation + "/.HighScoreDiff.txt", "r") as file2:
+                                    HIGH_SCORE = int(file2.read())
+                        #################################################################
                         CHECK_Y = False
                     else:
                         CHECK_Y = False
@@ -228,8 +240,12 @@ def main():
                     text = "Congratulations! You beat the High Score, Your Score is " + str(SCORE)
                     code = 1
                     print(text)
-                    with open(fileLocation + "/.HighScore.txt", "w") as file1:
-                        file1.write(str(SCORE))
+                    if INCDIFF:
+                        with open(fileLocation + "/.HighScoreDiff.txt", "w") as file1:
+                            file1.write(str(SCORE))
+                    else:
+                        with open(fileLocation + "/.HighScore.txt", "w") as file1:
+                            file1.write(str(SCORE))
                 else:
                     text = "Your Score: " + str(SCORE) + ", High Score: " + str(HIGH_SCORE)
                     code = 2
