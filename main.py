@@ -140,6 +140,7 @@ def main():
     homeShipBullets = []
     enemyShipBullets = []
     InitialAnimation = INITIAL_ANIMATION
+    global MAX_ENEMYSHIPS_ONSCREEN
 
     while InitialAnimation: # The Home Ship comes from the bottom of the Screen into the View
         clock.tick(FPS)
@@ -196,6 +197,8 @@ def main():
                 sys.exit(0)
 
 
+        if SCORE%50 == 0 and SCORE >= 200: # Code for inc difficulty every 5 ships destroyed
+            MAX_ENEMYSHIPS_ONSCREEN = SCORE/50
         if len(enemyShips) < MAX_ENEMYSHIPS_ONSCREEN: # spawn new enemy ship if possible
             newShip = EnemyShip(enemyShips)
             enemyShips.append(newShip)
