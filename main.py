@@ -184,7 +184,7 @@ def main():
                     homeShipBullets.append(homeship.bullet_spawn())
                     channel2.play(BULLET_FIRE_SOUND)
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_0:
+                if event.key == pygame.K_SPACE:
                     homeShipBullets.append(homeship.bullet_spawn())
                     channel2.play(BULLET_FIRE_SOUND)
             if event.type == GAME_OVER:
