@@ -65,7 +65,7 @@ SCORE = 0
 
 FONT = pygame.font.SysFont("consolas", 30)
 WINNER_FONT = pygame.font.SysFont("consolas", 15)
-
+WELCOME_FONT = pygame.font.SysFont('Consolas', 28)
 
 
 def draw_display(homeship, enemyShips, homeShipBullets, enemyShipBullets):
@@ -154,9 +154,16 @@ def main():
     while CHECK_Y:
             gameDisplay.fill(BLACK)
             keys_pressed = pygame.key.get_pressed()
-            text = "Enter 'Y' to increase difficulty, Any other Key to Not"
-            draw_text =  WINNER_FONT.render(text,1, GREEN)
-            gameDisplay.blit(draw_text,(WIDTH/2-(draw_text.get_width())/2, HEIGHT/2-(draw_text.get_height())/2))
+            text =  "\n\n\n\n\nWelcome To Space Invaders\n\n\n\n\n"\
+                    "Controls:\n"\
+                    "Go Up-> (UP, w)\n"\
+                    "Go Down> (DOWN, s)\n"\
+                    "Go Left-> (LEFT, a)\n"\
+                    "Go Right-> (RIGHT, d)\n"\
+                    "Shoot-> (LeftMouseClick, Spacebar)\n\n\n"\
+                    "Start the Game:\n\n"\
+                    "Enter 'Y' to increase difficulty and Start, Any other Key to Start by Not increasing difficulty"
+            blit_text(gameDisplay, text, (20, 20), WELCOME_FONT, GREEN)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
