@@ -18,15 +18,15 @@ class HomeShip:
     def movement(self, keys_pressed):
 
         # up and down
-        if keys_pressed[pygame.K_w] and self.y > 0 + PADDING_Y:
+        if (keys_pressed[pygame.K_w] or keys_pressed[pygame.K_UP]) and self.y > 0 + PADDING_Y:
             self.y -= HOMESHIP_SPEED_Y
-        elif keys_pressed[pygame.K_s] and self.y < HEIGHT - HOMESHIP_HEIGHT - PADDING_Y:
+        elif (keys_pressed[pygame.K_s] or keys_pressed[pygame.K_DOWN]) and self.y < HEIGHT - HOMESHIP_HEIGHT - PADDING_Y:
             self.y += HOMESHIP_SPEED_Y
         
         # left right
-        if keys_pressed[pygame.K_a] and self.x > 0 + PADDING_X:
+        if (keys_pressed[pygame.K_a] or keys_pressed[pygame.K_LEFT]) and self.x > 0 + PADDING_X:
             self.x -= HOMESHIP_SPEED_X
-        elif keys_pressed[pygame.K_d] and self.x < WIDTH - HOMESHIP_WIDTH - PADDING_X:
+        elif (keys_pressed[pygame.K_d] or keys_pressed[pygame.K_RIGHT]) and self.x < WIDTH - HOMESHIP_WIDTH - PADDING_X:
             self.x += HOMESHIP_SPEED_X
 
 
@@ -109,7 +109,7 @@ class EnemyShip:
                     if (self.y + ENEMYSHIP_HEIGHT >= ship.y):
                         repeat = True
                         break 
-                if (x < (0 + ENEMYSHIP_WIDTH)) or (x > (WIDTH - ENEMYSHIP_WIDTH)):
+                if (x < (0 + ENEMYSHIP_WIDTH + PADDING_X*2)) or (x > (WIDTH - ENEMYSHIP_WIDTH - PADDING_X*2)):
                     repeat = True
                     break
             if not repeat:

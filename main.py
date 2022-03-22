@@ -64,14 +64,17 @@ GAME_OVER = pygame.USEREVENT + 1 # GAME OVER
 SCORE = 0
 
 FONT = pygame.font.SysFont("consolas", 30)
+WINNER_FONT = pygame.font.SysFont("consolas", 15)
 
 
 
 def draw_display(homeship, enemyShips, homeShipBullets, enemyShipBullets):
     gameDisplay.blit(BACKGROUND_IMG, (0, 0))
     health_text = FONT.render("HOMESHIP HEALTH: {}".format(homeship.health), 1, WHITE)
+    score_text = FONT.render("YOUR SCORE: {}".format(str(SCORE)), 1, WHITE)
     gameDisplay.blit(HOMESHIP_IMG, (homeship.x, homeship.y))
     gameDisplay.blit(health_text,(WIDTH/2 -health_text.get_width()/2,HEIGHT/2))
+    gameDisplay.blit(score_text, ((WIDTH/2 -score_text.get_width()/2,(HEIGHT/2)+30)))
     for ship in enemyShips:
         gameDisplay.blit(ENEMYSHIP_IMG, (ship.x, ship.y))
     for bullet in homeShipBullets:
@@ -83,9 +86,12 @@ def draw_display(homeship, enemyShips, homeShipBullets, enemyShipBullets):
     pygame.display.update()
 
 
-def draw_end(winner_text):
+def draw_end(winner_text, code):
     gameDisplay.fill(BLACK)
-    draw_text = FONT.render(winner_text,1, WHITE)
+    if code == 2:
+        draw_text = FONT.render(winner_text,1, WHITE)
+    elif code == 1:
+        draw_text = WINNER_FONT.render(winner_text,1, WHITE)
     gameDisplay.blit(draw_text,(WIDTH/2-(draw_text.get_width())/2, HEIGHT/2-(draw_text.get_height())/2))
     pygame.display.update()
     pygame.time.delay(1000*5) # 3 seconds
@@ -181,17 +187,20 @@ def main():
                     homeShipBullets.append(homeship.bullet_spawn())
                     channel2.play(BULLET_FIRE_SOUND)
             if event.type == GAME_OVER:
+                code = 0
                 channel1.play(GAME_OVER_MUSIC)
                 if SCORE > HIGH_SCORE:
                     text = "Congratulations! You beat the High Score, Your Score is " + str(SCORE)
+                    code = 1
                     print(text)
                     with open(fileLocation + "/.HighScore.txt", "w") as file1:
                         file1.write(str(SCORE))
                 else:
                     text = "Your Score: " + str(SCORE) + ", High Score: " + str(HIGH_SCORE)
+                    code = 2
                     print(text)
                 running = False
-                draw_end(text)
+                draw_end(text, code)
                 pygame.quit()
                 sys.exit(0)
 
