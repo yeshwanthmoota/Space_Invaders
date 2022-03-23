@@ -140,6 +140,10 @@ def ask_restart():
         blit_text(gameDisplay, end_text, (20, 20), FONT, WHITE)
         pygame.display.update()
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     main()
