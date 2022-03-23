@@ -62,8 +62,6 @@ GAME_OVER_MUSIC.set_volume(0.7)
 # Custom Events
 GAME_OVER = pygame.USEREVENT + 1 # GAME OVER
 
-SCORE = 0
-
 FONT = pygame.font.SysFont("consolas", 30)
 WINNER_FONT = pygame.font.SysFont("consolas", 15)
 WELCOME_FONT = pygame.font.SysFont('Consolas', 28)
@@ -95,7 +93,7 @@ def draw_end(winner_text, code):
         draw_text = WINNER_FONT.render(winner_text,1, WHITE)
     gameDisplay.blit(draw_text,(WIDTH/2-(draw_text.get_width())/2, HEIGHT/2-(draw_text.get_height())/2))
     pygame.display.update()
-    pygame.time.delay(1000*5) # 3 seconds
+    pygame.time.delay(1000*3) # 3 seconds
 
 
 
@@ -134,9 +132,26 @@ def check_for_and_post_events(homeship, enemyShips, homeShipBullets, enemyShipBu
                 enemyShips.remove(ship)
                 SCORE += SCORE_FOR_EACH
 
+def ask_restart():
+    end_text = "\n\n\n\n\n\n\n\n\nRestart The Game Press SpaceBar\nEnter Any Other Key To Quit.\n"
+    while True:
+        gameDisplay.fill(BLACK)
+        gameDisplay.blit(BACKGROUND_IMG, (0, 0))
+        blit_text(gameDisplay, end_text, (20, 20), FONT, WHITE)
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    main()
+                else:
+                    pygame.quit()
+                    sys.exit(0)
+
+
 
 
 def main():
+
     channel1.play(BACKGROUND_MUSIC, -1)
     running = True
 
@@ -149,8 +164,26 @@ def main():
     InitialAnimation = INITIAL_ANIMATION
     global MAX_ENEMYSHIPS_ONSCREEN
     global INCDIFF
+    global SCORE
+    global HIGH_SCORE
+    SCORE = 0
     INCDIFF = False
     CHECK_Y = True
+
+
+    with open(fileLocation + "/.debugging.txt", "w"):
+        pass # to clear the debugging file
+    #################################################################
+    with open(fileLocation + "/.HighScore.txt", "a+") as file1: # To create HighScore.txt file if it didn't exist
+        print(file1.read())
+    with open(fileLocation + "/.HighScore.txt", "r") as file1:
+        if file1.read() == "":
+            HIGH_SCORE = 0
+        else:
+            with open(fileLocation + "/.HighScore.txt", "r") as file2:
+                HIGH_SCORE = int(file2.read())
+
+
 
     while CHECK_Y:
             gameDisplay.fill(BLACK)
@@ -178,7 +211,6 @@ def main():
                     if event.key == pygame.K_y:
                         INCDIFF = True
                         #################################################################
-                        global HIGH_SCORE
                         with open(fileLocation + "/.HighScoreDiff.txt", "a+") as file1: # To create HighScoreDiff.txt file if it didn't exist for recording difficult mode scores
                             print(file1.read())
                         with open(fileLocation + "/.HighScoreDiff.txt", "r") as file1:
@@ -252,8 +284,7 @@ def main():
                     print(text)
                 running = False
                 draw_end(text, code)
-                pygame.quit()
-                sys.exit(0)
+                ask_restart()
 
         if INCDIFF:
             if SCORE%50 == 0 and SCORE >= 200: # Code for inc difficulty every 5 ships destroyed
