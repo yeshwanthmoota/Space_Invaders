@@ -16,27 +16,18 @@ pygame.display.set_caption("Space Invaders")
 
 fileLocation = os.path.dirname(os.path.abspath(__file__)) # now inside directory 'Space_Invaders'
 # print(fileLocation) # for debugging
-
-with open(fileLocation + "/.debugging.txt", "w"):
-    pass # to clear the debugging file
-#################################################################
-with open(fileLocation + "/.HighScore.txt", "a+") as file1: # To create HighScore.txt file if it didn't exist
-    print(file1.read())
-with open(fileLocation + "/.HighScore.txt", "r") as file1:
-    if file1.read() == "":
-        HIGH_SCORE = 0
-    else:
-        with open(fileLocation + "/.HighScore.txt", "r") as file2:
-            HIGH_SCORE = int(file2.read())
+# print(os.path.join(fileLocation, ".debugging.txt"))
+# print(os.path.join(fileLocation, ".HighScore.txt"))
+# print(os.path.join(fileLocation, "Assets", "images", "spaceship1.png"))
         
 
 
 # Image Rendering
-HOMESHIP_IMG = pygame.image.load(fileLocation + "/Assets/images" + "/spaceship1.png")
+HOMESHIP_IMG = pygame.image.load(os.path.join(fileLocation, "Assets", "images", "spaceship1.png"))
 HOMESHIP_IMG = pygame.transform.scale(HOMESHIP_IMG, (HOMESHIP_WIDTH, HOMESHIP_HEIGHT))
-ENEMYSHIP_IMG = pygame.image.load(fileLocation + "/Assets/images" + "/spaceship2.png")
+ENEMYSHIP_IMG = pygame.image.load(os.path.join(fileLocation, "Assets", "images", "spaceship2.png"))
 ENEMYSHIP_IMG = pygame.transform.rotate(pygame.transform.scale(ENEMYSHIP_IMG, (ENEMYSHIP_WIDTH, ENEMYSHIP_HEIGHT)), 180)
-BACKGROUND_IMG = pygame.image.load(fileLocation + "/Assets/images" + "/spaceBackground.jpg").convert()
+BACKGROUND_IMG = pygame.image.load(os.path.join(fileLocation, "Assets", "images", "spaceBackground.jpg")).convert()
 BACKGROUND_IMG = pygame.transform.scale(BACKGROUND_IMG, (WIDTH, HEIGHT))
 
 # Sounds
@@ -45,17 +36,17 @@ channel1 = pygame.mixer.Channel(0) # Background music channel
 channel2 = pygame.mixer.Channel(1) # buller sound
 channel3 = pygame.mixer.Channel(2)
 
-BACKGROUND_MUSIC = pygame.mixer.Sound(fileLocation + "/Assets/sounds" + "/background_music.ogg")
+BACKGROUND_MUSIC = pygame.mixer.Sound(os.path.join(fileLocation, "Assets", "sounds", "background_music.ogg"))
 BACKGROUND_MUSIC.set_volume(0.7)
-BULLET_FIRE_SOUND = pygame.mixer.Sound(fileLocation + "/Assets/sounds" + "/bullet_fire_sound.ogg")
+BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join(fileLocation, "Assets", "sounds", "bullet_fire_sound.ogg"))
 BULLET_FIRE_SOUND.set_volume(1)
-BULLET_HIT_IMPACT = pygame.mixer.Sound(fileLocation + "/Assets/sounds" + "/bullet_hit_impact.ogg")
+BULLET_HIT_IMPACT = pygame.mixer.Sound(os.path.join(fileLocation, "Assets", "sounds", "bullet_hit_impact.ogg"))
 BULLET_HIT_IMPACT.set_volume(1)
-ENEMYSHIP_HIT_SOUND = pygame.mixer.Sound(fileLocation + "/Assets/sounds" + "/enemyship_hit.ogg")
+ENEMYSHIP_HIT_SOUND = pygame.mixer.Sound(os.path.join(fileLocation, "Assets", "sounds", "enemyship_hit.ogg"))
 ENEMYSHIP_HIT_SOUND.set_volume(1)
-CRASH_SOUND = pygame.mixer.Sound(fileLocation + "/Assets/sounds" + "/crash.wav")
+CRASH_SOUND = pygame.mixer.Sound(os.path.join(fileLocation, "Assets", "sounds", "crash.wav"))
 CRASH_SOUND.set_volume(1)
-GAME_OVER_MUSIC = pygame.mixer.Sound(fileLocation + "/Assets/sounds" + "/cheering.wav")
+GAME_OVER_MUSIC = pygame.mixer.Sound(os.path.join(fileLocation, "Assets", "sounds", "cheering.wav"))
 GAME_OVER_MUSIC.set_volume(0.7)
 
 
@@ -175,16 +166,16 @@ def main():
     CHECK_Y = True
 
 
-    with open(fileLocation + "/.debugging.txt", "w"):
+    with open(os.path.join(fileLocation, ".debugging.txt"), "w"):
         pass # to clear the debugging file
     #################################################################
-    with open(fileLocation + "/.HighScore.txt", "a+") as file1: # To create HighScore.txt file if it didn't exist
+    with open(os.path.join(fileLocation, ".HighScore.txt"), "a+") as file1: # To create HighScore.txt file if it didn't exist
         print(file1.read())
-    with open(fileLocation + "/.HighScore.txt", "r") as file1:
+    with open(os.path.join(fileLocation, ".HighScore.txt"), "r") as file1:
         if file1.read() == "":
             HIGH_SCORE = 0
         else:
-            with open(fileLocation + "/.HighScore.txt", "r") as file2:
+            with open(os.path.join(fileLocation, ".HighScore.txt"), "r") as file2:
                 HIGH_SCORE = int(file2.read())
 
 
@@ -215,13 +206,13 @@ def main():
                     if event.key == pygame.K_y:
                         INCDIFF = True
                         #################################################################
-                        with open(fileLocation + "/.HighScoreDiff.txt", "a+") as file1: # To create HighScoreDiff.txt file if it didn't exist for recording difficult mode scores
+                        with open(os.path.join(fileLocation, ".HighScoreDiff.txt"), "a+") as file1: # To create HighScoreDiff.txt file if it didn't exist for recording difficult mode scores
                             print(file1.read())
-                        with open(fileLocation + "/.HighScoreDiff.txt", "r") as file1:
+                        with open(os.path.join(fileLocation, ".HighScoreDiff.txt"), "r") as file1:
                             if file1.read() == "":
                                 HIGH_SCORE = 0
                             else:
-                                with open(fileLocation + "/.HighScoreDiff.txt", "r") as file2:
+                                with open(os.path.join(fileLocation, ".HighScoreDiff.txt"), "r") as file2:
                                     HIGH_SCORE = int(file2.read())
                         #################################################################
                         CHECK_Y = False
@@ -277,10 +268,10 @@ def main():
                     code = 1
                     print(text)
                     if INCDIFF:
-                        with open(fileLocation + "/.HighScoreDiff.txt", "w") as file1:
+                        with open(os.path.join(fileLocation, ".HighScoreDiff.txt"), "w") as file1:
                             file1.write(str(SCORE))
                     else:
-                        with open(fileLocation + "/.HighScore.txt", "w") as file1:
+                        with open(os.path.join(fileLocation, ".HighScore.txt"), "w") as file1:
                             file1.write(str(SCORE))
                 else:
                     text = "Your Score: " + str(SCORE) + ", High Score: " + str(HIGH_SCORE)
@@ -320,7 +311,7 @@ def main():
             "lengthOfHomeShipBullets": len(homeShipBullets),
             "score": SCORE
         }
-        with open(fileLocation+"/.debugging.txt", "a") as file1:
+        with open(os.path.join(fileLocation, ".debugging.txt"), "a") as file1:
             file1.writelines(str(info_dict) + "\n\n\n")
 
 
